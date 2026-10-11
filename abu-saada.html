@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E2229">
+<title>سوبر ماركت أبو سعدة</title>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --abyss: #0E2229;
+    --ink: #14313A;
+    --ink-2: #1E4753;
+    --paper: #F3F7F6;
+    --card: #FFFFFF;
+    --tag: #FFD23F;
+    --debt: #B3261E;
+    --line: #D5E0DD;
+    --muted: #5B7279;
+    --wa: #1FA855;
+    --nav-h: 68px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: 'Readex Pro', 'Segoe UI', Tahoma, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+  button, input, select { font: inherit; color: inherit; }
+  input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible {
+    outline: 3px solid var(--tag);
+    outline-offset: 2px;
+  }
+
+  /* ---------- الشريط العلوي ---------- */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--ink);
+    color: #fff;
+    padding: 10px 14px;
+    padding-top: calc(10px + env(safe-area-inset-top));
+  }
+  .menu-btn {
+    width: 44px;
+    height: 44px;
+    flex: none;
+    border: 0;
+    border-radius: 12px;
+    background: var(--ink-2);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .menu-btn svg { width: 28px; height: 28px; }
+  .brand { flex: 1; min-width: 0; }
+  .brand b { display: block; font-size: 1.05rem; font-weight: 700; line-height: 1.25; }
+  .brand span { font-size: .75rem; color: #9FBAC0; }
+  .chip {
+    background: var(--tag);
+    color: var(--ink);
+    font-weight: 700;
+    font-size: .85rem;
+    padding: 5px 16px 5px 10px;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 9px 50%);
+    white-space: nowrap;
+  }
+
+  /* ---------- المحتوى ---------- */
+  main {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 16px 16px calc(var(--nav-h) + 28px + env(safe-area-inset-bottom));
+  }
+  .view { display: none; }
+  .view.active { display: block; }
+  .view-title { font-size: 1.2rem; font-weight: 700; margin: 4px 0 14px; }
+  .view-title small { display: block; font-size: .82rem; font-weight: 400; color: var(--muted); }
+
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: .85rem; font-weight: 500; color: var(--muted); margin-bottom: 6px; }
+  input, select {
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    background: var(--paper);
+  }
+  input:focus-visible, select:focus-visible { border-color: var(--ink); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .hint { font-size: .8rem; color: var(--muted); margin-top: 8px; }
+  .error { color: var(--debt); font-size: .86rem; margin-top: 10px; min-height: 1.3em; }
+  .line-total {
+    margin-bottom: 14px;
+    padding: 10px 14px;
+    background: var(--paper);
+    border-radius: 12px;
+    font-size: .9rem;
+    color: var(--muted);
+  }
+  .line-total b { color: var(--ink); }
+
+  .btn-main {
+    width: 100%;
+    min-height: 50px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--ink);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform .12s;
+  }
+  .btn-main:active { transform: scale(.98); }
+
+  .result {
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #E6F2EC;
+    border-right: 4px solid #2E7D5B;
+    font-size: .92rem;
+    display: none;
+  }
+  .result.show { display: block; }
+  .wa-btn, .wa-alt {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 12px;
+  }
+  .wa-btn { margin-top: 12px; padding: 13px; background: var(--wa); color: #fff; }
+  .wa-alt {
+    margin-top: 8px;
+    padding: 10px;
+    font-size: .9rem;
+    color: #1B6E43;
+    border: 1px solid var(--wa);
+  }
+
+  /* ---------- الزبائن ---------- */
+  .customer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .avatar {
+    width: 44px;
+    height: 44px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--tag);
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+  .info { flex: 1; min-width: 0; }
+  .info .name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .info .phone { font-size: .8rem; color: var(--muted); direction: ltr; text-align: right; }
+
+  /* الدين على شكل بطاقة سعر */
+  .price-tag {
+    background: var(--tag);
+    color: var(--ink);
+    font-weight: 700;
+    padding: 6px 18px 6px 12px;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 10px 50%);
+    white-space: nowrap;
+  }
+  .price-tag.zero { background: var(--line); color: var(--muted); }
+
+  .actions {
+    flex: 1 1 100%;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px dashed var(--line);
+    padding-top: 6px;
+  }
+  .actions:empty { display: none; }
+  .link-btn {
+    background: none;
+    border: 0;
+    padding: 6px 2px;
+    font-size: .82rem;
+    color: #1B6E43;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .link-btn.del { color: var(--muted); text-decoration: none; margin-inline-start: auto; }
+  .link-btn.del.confirm { color: var(--debt); font-weight: 600; }
+
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 30px 14px;
+    border: 1.5px dashed var(--line);
+    border-radius: 16px;
+  }
+  .empty .btn-main { margin-top: 14px; width: auto; padding: 0 22px; }
+
+  /* ---------- الشريط السفلي ---------- */
+  .nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    display: flex;
+    height: calc(var(--nav-h) + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: #fff;
+    border-top: 1px solid var(--line);
+  }
+  .nav button {
+    flex: 1;
+    position: relative;
+    border: 0;
+    background: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    font-size: .75rem;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .nav button svg { width: 24px; height: 24px; }
+  .nav button.active { color: var(--ink); font-weight: 600; }
+  .nav button.active::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 38px;
+    height: 4px;
+    border-radius: 0 0 4px 4px;
+    background: var(--tag);
+  }
+  .ico { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ---------- شاشة الافتتاح: الروبوت والقائمة ---------- */
+  .splash {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    overflow-y: auto;
+    display: flex;
+    padding: 24px 16px;
+    background: radial-gradient(120% 70% at 50% 28%, var(--ink-2) 0%, var(--abyss) 70%);
+    transition: opacity .45s, visibility 0s .45s;
+  }
+  .splash.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+  .skip {
+    position: absolute;
+    top: calc(14px + env(safe-area-inset-top));
+    left: 14px;
+    z-index: 2;
+    padding: 6px 14px;
+    background: none;
+    border: 1px solid rgba(255,255,255,.28);
+    border-radius: 999px;
+    color: #CFE0E3;
+    font-size: .8rem;
+    cursor: pointer;
+  }
+  .stage { width: min(300px, 86vw); margin: auto; }
+  .welcome { color: #fff; text-align: center; font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; }
+  .welcome small { display: block; font-weight: 400; font-size: .85rem; color: #9FBAC0; }
+
+  .robot-drop { position: relative; }
+  /* الحبل اللي بينزّل الروبوت */
+  .robot-drop::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% - 8px);
+    width: 3px;
+    height: 100vh;
+    margin-left: -1.5px;
+    background: linear-gradient(#4F727B, #9FB8BE);
+    transform-origin: bottom;
+  }
+  .robot-drop svg { display: block; width: 100%; height: auto; }
+  .head { transform-box: fill-box; transform-origin: 50% 100%; animation: tilt 3.6s ease-in-out infinite 1.4s; }
+  .eye { transform-box: fill-box; transform-origin: center; animation: blink 4s infinite 1.8s; }
+  .bulb { animation: pulse 1.6s ease-in-out infinite; }
+
+  .menu {
+    width: 90.67%;
+    margin: -1px auto 0;
+    background: var(--paper);
+    border-radius: 0 0 18px 18px;
+    overflow: hidden;
+    box-shadow: 0 18px 40px rgba(0,0,0,.35);
+  }
+  .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 13px 14px;
+    border: 0;
+    border-top: 1px solid var(--line);
+    background: transparent;
+    text-align: right;
+    cursor: pointer;
+  }
+  .menu-item:first-child { border-top: 0; }
+  .menu-item:active { background: #E1EBE9; }
+  .mi-icon {
+    width: 42px;
+    height: 42px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: var(--ink);
+    color: var(--tag);
+  }
+  .mi-icon svg { width: 22px; height: 22px; }
+  .mi-text { flex: 1; min-width: 0; }
+  .mi-text b { display: block; font-size: .98rem; font-weight: 600; }
+  .mi-text span { display: block; font-size: .76rem; color: var(--muted); }
+  .mi-arrow { width: 18px; height: 18px; color: var(--muted); flex: none; }
+
+  /* تسلسل الافتتاح: ينزل الروبوت، يظهر الترحيب، تنزل القائمة، تظهر الخيارات */
+  .splash.play .robot-drop { animation: drop 1.15s cubic-bezier(.22, 1.1, .36, 1) both; }
+  .splash.play .robot-drop::before { animation: cable-up .5s ease-in 1.25s both; }
+  .splash.play .welcome { animation: fade-up .6s ease-out 1.3s both; }
+  .splash.play .menu { animation: lower .9s cubic-bezier(.3, .7, .2, 1) 1.9s both; }
+  .splash.play .menu-item { animation: item-in .45s ease-out both; }
+  .splash.play .menu-item:nth-child(1) { animation-delay: 2.5s; }
+  .splash.play .menu-item:nth-child(2) { animation-delay: 2.65s; }
+  .splash.play .menu-item:nth-child(3) { animation-delay: 2.8s; }
+
+  @keyframes drop { from { transform: translateY(-110vh); } to { transform: none; } }
+  @keyframes cable-up { to { transform: scaleY(0); } }
+  @keyframes fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes lower {
+    from { clip-path: inset(0 -40px 100% -40px); transform: translateY(-14px); }
+    to   { clip-path: inset(0 -40px -60px -40px); transform: none; }
+  }
+  @keyframes item-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+  @keyframes tilt { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+  @keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .robot-drop::before { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== شاشة الافتتاح ========== -->
+<div class="splash" id="splash">
+  <button class="skip" id="skipBtn" type="button">تخطي</button>
+  <div class="stage">
+    <div class="welcome">أهلاً بك في سوبر ماركت أبو سعدة<small>اختار من القائمة</small></div>
+
+    <div class="robot-drop">
+      <svg viewBox="0 0 300 210" aria-hidden="true" focusable="false">
+        <!-- الجسم -->
+        <rect x="102" y="120" width="96" height="86" rx="24" fill="#EAF1F2"/>
+        <path d="M120 142H180V176H120L110 159Z" fill="#FFD23F"/>
+        <circle cx="123" cy="159" r="3" fill="#EAF1F2"/>
+        <text x="153" y="166" text-anchor="middle" font-size="20" font-weight="700" fill="#14313A" font-family="Readex Pro, sans-serif">₪</text>
+        <!-- الذراعان -->
+        <path d="M106 138L34 194" stroke="#9FB8BE" stroke-width="14" stroke-linecap="round" fill="none"/>
+        <path d="M194 138L266 194" stroke="#9FB8BE" stroke-width="14" stroke-linecap="round" fill="none"/>
+        <!-- الرقبة والرأس -->
+        <rect x="138" y="108" width="24" height="14" rx="4" fill="#9FB8BE"/>
+        <g class="head">
+          <line x1="150" y1="12" x2="150" y2="36" stroke="#9FB8BE" stroke-width="4" stroke-linecap="round"/>
+          <circle class="bulb" cx="150" cy="10" r="7" fill="#FFD23F"/>
+          <rect x="78" y="58" width="14" height="28" rx="6" fill="#9FB8BE"/>
+          <rect x="208" y="58" width="14" height="28" rx="6" fill="#9FB8BE"/>
+          <rect x="90" y="34" width="120" height="78" rx="26" fill="#EAF1F2"/>
+          <rect x="104" y="50" width="92" height="46" rx="20" fill="#0E2229"/>
+          <ellipse class="eye" cx="130" cy="72" rx="9" ry="11" fill="#FFD23F"/>
+          <ellipse class="eye" cx="170" cy="72" rx="9" ry="11" fill="#FFD23F"/>
+          <path d="M139 88Q150 95 161 88" stroke="#FFD23F" stroke-width="3" stroke-linecap="round" fill="none"/>
+        </g>
+        <!-- عمود القائمة اللي ماسكه الروبوت -->
+        <rect x="12" y="192" width="276" height="14" rx="7" fill="#9FB8BE"/>
+        <circle cx="34" cy="199" r="11" fill="#EAF1F2" stroke="#6F8F97" stroke-width="3"/>
+        <circle cx="266" cy="199" r="11" fill="#EAF1F2" stroke="#6F8F97" stroke-width="3"/>
+      </svg>
+    </div>
+
+    <div class="menu">
+      <button class="menu-item" type="button" data-view="customers">
+        <span class="mi-icon"><svg class="ico" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.5" cy="9" r="2.5"/><path d="M17 14.2c2.6.2 4.5 2 4.5 5.3"/></svg></span>
+        <span class="mi-text"><b>الزبائن</b><span id="miCustomers">ما في زبائن لسا</span></span>
+        <svg class="mi-arrow ico" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <button class="menu-item" type="button" data-view="buy">
+        <span class="mi-icon"><svg class="ico" viewBox="0 0 24 24"><path d="M3 12.2V4a1 1 0 0 1 1-1h8.2a1 1 0 0 1 .7.3l7.8 7.8a1 1 0 0 1 0 1.4l-7.2 7.2a1 1 0 0 1-1.4 0L3.3 12.9a1 1 0 0 1-.3-.7Z"/><circle cx="8" cy="8" r="1.5"/></svg></span>
+        <span class="mi-text"><b>تسجيل شراء بالدين</b><span>سجّل المنتج وأرسل واتساب</span></span>
+        <svg class="mi-arrow ico" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <button class="menu-item" type="button" data-view="add">
+        <span class="mi-icon"><svg class="ico" viewBox="0 0 24 24"><circle cx="10" cy="8" r="3.8"/><path d="M3 20c0-3.8 3.1-6.3 7-6.3 1.3 0 2.5.3 3.5.8"/><path d="M18 14v6M15 17h6"/></svg></span>
+        <span class="mi-text"><b>إضافة زبون جديد</b><span>الاسم ورقم الواتساب</span></span>
+        <svg class="mi-arrow ico" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== التطبيق ========== -->
+<header class="topbar">
+  <button class="menu-btn" id="menuBtn" type="button" aria-label="القائمة">
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <line x1="16" y1="9" x2="16" y2="5" stroke="#9FB8BE" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="16" cy="4.5" r="2.2" fill="#FFD23F"/>
+      <rect x="5" y="9" width="22" height="18" rx="6" fill="#EAF1F2"/>
+      <rect x="8" y="12" width="16" height="10" rx="4" fill="#0E2229"/>
+      <circle cx="13" cy="17" r="1.9" fill="#FFD23F"/>
+      <circle cx="19" cy="17" r="1.9" fill="#FFD23F"/>
+    </svg>
+  </button>
+  <div class="brand"><b>سوبر ماركت أبو سعدة</b><span>دفتر الديون</span></div>
+  <div class="chip">الديون <b id="grandTotal">0</b> ₪</div>
+</header>
+
+<main>
+  <!-- الزبائن -->
+  <section class="view active" id="view-customers">
+    <h1 class="view-title">الزبائن<small id="customerCount">0 زبون</small></h1>
+    <div class="field">
+      <input id="search" type="search" placeholder="ابحث بالاسم أو الرقم">
+    </div>
+    <div id="list"></div>
+  </section>
+
+  <!-- تسجيل شراء -->
+  <section class="view" id="view-buy">
+    <h1 class="view-title">تسجيل شراء بالدين<small>بعد الحفظ بتظهر لك رسالة الواتساب جاهزة</small></h1>
+    <div class="panel">
+      <div class="field">
+        <label for="buyCustomer">الزبون</label>
+        <select id="buyCustomer"></select>
+      </div>
+      <div class="field">
+        <label for="product">المنتج</label>
+        <input id="product" type="text" placeholder="مثال: خبز" autocomplete="off">
+      </div>
+      <div class="row2 field">
+        <div>
+          <label for="qty">الكمية</label>
+          <input id="qty" type="text" inputmode="decimal" value="1" dir="ltr">
+        </div>
+        <div>
+          <label for="price">سعر الواحدة (₪)</label>
+          <input id="price" type="text" inputmode="decimal" placeholder="3" dir="ltr" autocomplete="off">
+        </div>
+      </div>
+      <div class="line-total">مجموع هذا المنتج: <b id="lineTotal">0</b> ₪</div>
+      <p class="error" id="buyError"></p>
+      <button class="btn-main" id="buyBtn" type="button">إضافة على الدين</button>
+
+      <div class="result" id="result">
+        <div id="resultText"></div>
+        <a class="wa-btn" id="waBtn" href="#" target="_blank" rel="noopener">إرسال للزبون على واتساب</a>
+        <a class="wa-alt" id="waAlt" href="#" target="_blank" rel="noopener">ما اشتغل؟ جرّب مقدمة <span id="altCode">972</span></a>
+        <p class="hint">بيفتح واتساب والرسالة جاهزة، اضغط إرسال هناك. إذا قال واتساب إن الرقم مش على واتساب، جرّب المقدمة الثانية.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- إضافة زبون -->
+  <section class="view" id="view-add">
+    <h1 class="view-title">إضافة زبون جديد<small>الاسم ورقم الواتساب</small></h1>
+    <div class="panel">
+      <div class="field">
+        <label for="name">اسم الزبون</label>
+        <input id="name" type="text" placeholder="مثال: أبو أحمد" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="phone">رقم الواتساب</label>
+        <input id="phone" type="tel" inputmode="tel" placeholder="0599123456" dir="ltr" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="cc">مقدمة الرقم</label>
+        <select id="cc">
+          <option value="">تلقائي (النظام بيكشفها)</option>
+          <option value="970">970 (فلسطين)</option>
+          <option value="972">972 (إسرائيل)</option>
+        </select>
+      </div>
+      <div class="line-total">الرقم اللي رح ينحفظ: <b id="phonePreview" dir="ltr">—</b></div>
+      <p class="hint" style="margin:-6px 0 10px">اكتب الرقم المحلي (يبدأ بصفر) أو الدولي. إذا الكشف التلقائي غلط، اختار المقدمة يدوياً.</p>
+      <p class="error" id="error"></p>
+      <button class="btn-main" id="addBtn" type="button">حفظ الزبون</button>
+      <div class="result" id="addOk"></div>
+    </div>
+  </section>
+</main>
+
+<nav class="nav" aria-label="التنقل">
+  <button type="button" data-view="customers" class="active">
+    <svg class="ico" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.5" cy="9" r="2.5"/><path d="M17 14.2c2.6.2 4.5 2 4.5 5.3"/></svg>
+    الزبائن
+  </button>
+  <button type="button" data-view="buy">
+    <svg class="ico" viewBox="0 0 24 24"><path d="M3 12.2V4a1 1 0 0 1 1-1h8.2a1 1 0 0 1 .7.3l7.8 7.8a1 1 0 0 1 0 1.4l-7.2 7.2a1 1 0 0 1-1.4 0L3.3 12.9a1 1 0 0 1-.3-.7Z"/><circle cx="8" cy="8" r="1.5"/></svg>
+    تسجيل شراء
+  </button>
+  <button type="button" data-view="add">
+    <svg class="ico" viewBox="0 0 24 24"><circle cx="10" cy="8" r="3.8"/><path d="M3 20c0-3.8 3.1-6.3 7-6.3 1.3 0 2.5.3 3.5.8"/><path d="M18 14v6M15 17h6"/></svg>
+    زبون جديد
+  </button>
+</nav>
+
+<script>
+/* ---------- أدوات عامة ---------- */
+const $ = id => document.getElementById(id);
+
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+
+/* ---------- التخزين (localStorage مع احتياط بالذاكرة) ---------- */
+const KEY = 'abu-saada-data';
+let memoryFallback = null;
+
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {
+    if (memoryFallback) return memoryFallback;
+  }
+  return memoryFallback || { customers: [], transactions: [] };
+}
+
+function save(data) {
+  memoryFallback = data;
+  try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {}
+}
+
+let db = load();
+
+/* ---------- الأرقام والهواتف ---------- */
+function toLatinDigits(s) {
+  return s.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+}
+
+// أرقام الجوال الفلسطينية: 059 (جوال) و 056 (أوريدو). غيرها من 05x يعتبر رقم إسرائيلي (972)
+const PS_MOBILE_PREFIXES = ['059', '056'];
+
+function detectCountryCode(localDigits) {
+  if (localDigits.startsWith('05') && !PS_MOBILE_PREFIXES.includes(localDigits.slice(0, 3))) {
+    return '972';
+  }
+  return '970';
+}
+
+// 0599123456 -> 970599123456 | 0521234567 -> 972521234567
+function normalizePhone(raw, forcedCode) {
+  let d = toLatinDigits(raw).replace(/\D/g, '');
+  if (d.startsWith('00')) d = d.slice(2);
+
+  if (d.length >= 11 && (d.startsWith('970') || d.startsWith('972'))) return d;
+  if (d.length === 9 && d[0] === '5') d = '0' + d;
+
+  if (d.startsWith('0')) {
+    const code = forcedCode || detectCountryCode(d);
+    return code + d.slice(1);
+  }
+  return d;
+}
+
+// الدين = مجموع المشتريات - مجموع التسديدات
+function getDebt(customerId) {
+  const total = db.transactions
+    .filter(t => t.customerId === customerId)
+    .reduce((sum, t) => sum + (t.type === 'purchase' ? t.amount : -t.amount), 0);
+  return Math.round(total * 100) / 100;
+}
+
+// يقبل الأرقام العربية والفاصلة العشرية (3,5 أو ٣٫٥) ويرجّع NaN إذا مش رقم
+function toNumber(s) {
+  const clean = toLatinDigits(s).replace(/[,٫،]/g, '.').trim();
+  return clean === '' ? NaN : Number(clean);
+}
+
+function fmt(n) {
+  return Number.isInteger(n) ? String(n) : n.toFixed(2);
+}
+
+// يبدّل 970 <-> 972 (وإذا الرقم من دولة ثانية بيرجّعه كما هو)
+function swapCode(phone) {
+  if (phone.startsWith('970')) return '972' + phone.slice(3);
+  if (phone.startsWith('972')) return '970' + phone.slice(3);
+  return phone;
+}
+
+/* ---------- التنقل وشاشة الروبوت ---------- */
+const VIEWS = ['customers', 'buy', 'add'];
+const splash = $('splash');
+
+function showView(name) {
+  VIEWS.forEach(v => $('view-' + v).classList.toggle('active', v === name));
+  document.querySelectorAll('.nav button').forEach(b =>
+    b.classList.toggle('active', b.dataset.view === name));
+  window.scrollTo(0, 0);
+}
+
+function updateMenuStats() {
+  const n = db.customers.length;
+  let total = 0;
+  db.customers.forEach(c => total += getDebt(c.id));
+  $('miCustomers').textContent = n === 0
+    ? 'ما في زبائن لسا'
+    : n + ' زبون · إجمالي الدين ' + fmt(Math.round(total * 100) / 100) + ' ₪';
+}
+
+function openSplash() {
+  updateMenuStats();
+  splash.classList.remove('hide', 'play');
+  void splash.offsetWidth; // يعيد تشغيل الحركة من البداية
+  splash.classList.add('play');
+}
+
+function closeSplash() {
+  splash.classList.add('hide');
+}
+
+document.querySelectorAll('[data-view]').forEach(b =>
+  b.addEventListener('click', () => { showView(b.dataset.view); closeSplash(); }));
+$('skipBtn').addEventListener('click', () => { showView('customers'); closeSplash(); });
+$('menuBtn').addEventListener('click', openSplash);
+
+/* ---------- عرض الزبائن ---------- */
+let pendingDelete = null;
+
+function render() {
+  const q = toLatinDigits($('search').value.trim().toLowerCase());
+  const list = $('list');
+  list.innerHTML = '';
+  renderSelect();
+
+  let grand = 0;
+  db.customers.forEach(c => grand += getDebt(c.id));
+  $('grandTotal').textContent = fmt(Math.round(grand * 100) / 100);
+  $('customerCount').textContent = db.customers.length + ' زبون';
+
+  const shown = db.customers.filter(c =>
+    c.name.toLowerCase().includes(q) || c.phone.includes(q)
+  );
+
+  if (shown.length === 0) {
+    const empty = el('div', 'empty');
+    empty.appendChild(el('div', '', db.customers.length === 0
+      ? 'ما في زبائن لسا. ابدأ بإضافة أول زبون.'
+      : 'ما لقينا زبون بهالاسم أو الرقم.'));
+    if (db.customers.length === 0) {
+      const go = el('button', 'btn-main', 'إضافة زبون');
+      go.type = 'button';
+      go.addEventListener('click', () => showView('add'));
+      empty.appendChild(go);
+    }
+    list.appendChild(empty);
+    return;
+  }
+
+  shown.forEach(c => {
+    const debt = getDebt(c.id);
+    const row = el('div', 'customer');
+
+    const avatar = el('div', 'avatar', (c.name.trim()[0] || '?').toUpperCase());
+
+    const info = el('div', 'info');
+    info.append(el('div', 'name', c.name), el('div', 'phone', '+' + c.phone));
+
+    const tag = el('div', 'price-tag' + (debt === 0 ? ' zero' : ''), fmt(debt) + ' ₪');
+
+    const actions = el('div', 'actions');
+
+    const other = swapCode(c.phone);
+    if (other !== c.phone) {
+      const swap = el('button', 'link-btn', 'بدّل المقدمة إلى ' + other.slice(0, 3));
+      swap.type = 'button';
+      swap.addEventListener('click', () => {
+        c.phone = other;
+        save(db);
+        render();
+      });
+      actions.appendChild(swap);
+    }
+
+    const del = el('button', 'link-btn del' + (pendingDelete === c.id ? ' confirm' : ''),
+      pendingDelete === c.id ? 'تأكيد الحذف؟' : 'حذف');
+    del.type = 'button';
+    del.addEventListener('click', () => {
+      if (pendingDelete === c.id) {
+        db.customers = db.customers.filter(x => x.id !== c.id);
+        db.transactions = db.transactions.filter(t => t.customerId !== c.id);
+        pendingDelete = null;
+        save(db);
+      } else {
+        pendingDelete = c.id;
+      }
+      render();
+    });
+    actions.appendChild(del);
+
+    row.append(avatar, info, tag, actions);
+    list.appendChild(row);
+  });
+}
+
+/* ---------- إضافة زبون ---------- */
+function addCustomer() {
+  const name = $('name').value.trim();
+  const phone = normalizePhone($('phone').value, $('cc').value);
+  const err = $('error');
+  const ok = $('addOk');
+  err.textContent = '';
+  ok.classList.remove('show');
+
+  if (!name) { err.textContent = 'اكتب اسم الزبون.'; return; }
+  if (phone.length < 11 || phone.length > 13) {
+    err.textContent = 'رقم الواتساب غير صحيح. تأكد من الأرقام.';
+    return;
+  }
+  if (db.customers.some(c => c.phone === phone)) {
+    err.textContent = 'هذا الرقم مسجّل لزبون ثاني.';
+    return;
+  }
+
+  db.customers.push({ id: Date.now().toString(), name, phone });
+  save(db);
+  $('name').value = '';
+  $('phone').value = '';
+  $('cc').value = '';
+  updatePhonePreview();
+  pendingDelete = null;
+  ok.textContent = 'تمت إضافة ' + name + ' ✓';
+  ok.classList.add('show');
+  render();
+}
+
+function updatePhonePreview() {
+  const p = normalizePhone($('phone').value, $('cc').value);
+  $('phonePreview').textContent = p ? '+' + p : '—';
+}
+
+/* ---------- تسجيل شراء ---------- */
+function renderSelect() {
+  const sel = $('buyCustomer');
+  const current = sel.value;
+  sel.innerHTML = '';
+
+  if (db.customers.length === 0) {
+    const o = el('option', '', 'أضف زبون أولاً');
+    o.value = '';
+    sel.appendChild(o);
+    sel.disabled = true;
+    return;
+  }
+
+  sel.disabled = false;
+  db.customers.forEach(c => {
+    const o = el('option', '', c.name);
+    o.value = c.id;
+    sel.appendChild(o);
+  });
+  if (db.customers.some(c => c.id === current)) sel.value = current;
+}
+
+function updateLineTotal() {
+  const qty = toNumber($('qty').value);
+  const price = toNumber($('price').value);
+  const total = (isNaN(qty) || isNaN(price)) ? 0 : Math.round(qty * price * 100) / 100;
+  $('lineTotal').textContent = fmt(total);
+}
+
+const SHOP_NAME = 'سوبر ماركت أبو سعدة';
+
+function buildMessage(customer, product, qty, amount, debt) {
+  return '🛒 *' + SHOP_NAME + '*\n' +
+    'مرحباً ' + customer.name + ' 👋\n' +
+    'تم تسجيل: ' + product + ' × ' + fmt(qty) + ' = ' + fmt(amount) + ' ₪\n' +
+    'إجمالي دينك حتى الآن: ' + fmt(debt) + ' ₪';
+}
+
+function whatsappLink(phone, message) {
+  return 'https://wa.me/' + phone + '?text=' + encodeURIComponent(message);
+}
+
+function addPurchase() {
+  const err = $('buyError');
+  const box = $('result');
+  err.textContent = '';
+  box.classList.remove('show');
+
+  const customerId = $('buyCustomer').value;
+  const product = $('product').value.trim();
+  const qty = toNumber($('qty').value);
+  const price = toNumber($('price').value);
+
+  if (!customerId) { err.textContent = 'اختر الزبون أولاً.'; return; }
+  if (!product) { err.textContent = 'اكتب اسم المنتج.'; return; }
+  if (isNaN(qty) || qty <= 0) { err.textContent = 'الكمية لازم تكون رقم أكبر من صفر.'; return; }
+  if (isNaN(price) || price <= 0) { err.textContent = 'السعر لازم يكون رقم أكبر من صفر.'; return; }
+
+  const amount = Math.round(qty * price * 100) / 100;
+  db.transactions.push({
+    id: Date.now().toString(),
+    customerId,
+    type: 'purchase',
+    product,
+    qty,
+    unitPrice: price,
+    amount,
+    date: new Date().toISOString()
+  });
+  save(db);
+
+  const customer = db.customers.find(c => c.id === customerId);
+  const debt = getDebt(customerId);
+  const msg = buildMessage(customer, product, qty, amount, debt);
+  const altPhone = swapCode(customer.phone);
+
+  $('resultText').textContent = 'تم تسجيل: ' + product + ' × ' + fmt(qty) + ' = ' + fmt(amount) +
+    ' ₪ — إجمالي دين ' + customer.name + ': ' + fmt(debt) + ' ₪';
+  $('waBtn').href = whatsappLink(customer.phone, msg);
+  $('waAlt').href = whatsappLink(altPhone, msg);
+  $('altCode').textContent = altPhone.slice(0, 3);
+  $('waAlt').style.display = altPhone === customer.phone ? 'none' : 'block';
+  box.classList.add('show');
+  box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  $('product').value = '';
+  $('qty').value = '1';
+  $('price').value = '';
+  updateLineTotal();
+  render();
+}
+
+/* ---------- ربط الأحداث ---------- */
+$('buyBtn').addEventListener('click', addPurchase);
+$('qty').addEventListener('input', updateLineTotal);
+$('price').addEventListener('input', updateLineTotal);
+$('price').addEventListener('keydown', e => { if (e.key === 'Enter') addPurchase(); });
+
+$('phone').addEventListener('input', updatePhonePreview);
+$('cc').addEventListener('change', updatePhonePreview);
+$('name').addEventListener('input', () => $('addOk').classList.remove('show'));
+$('phone').addEventListener('keydown', e => { if (e.key === 'Enter') addCustomer(); });
+$('addBtn').addEventListener('click', addCustomer);
+$('search').addEventListener('input', () => { pendingDelete = null; render(); });
+
+render();
+openSplash();
+</script>
+</body>
+</html>
